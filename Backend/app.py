@@ -15,10 +15,9 @@ model.eval()
 
 @app.route("/process-image", methods = ['POST'])
 def POST_process_image():
-    # file = request.files['image'].read()
-    buffer = process_image(model)
-    return send_file(buffer, mimetype='image/png')
-
+    input_image = request.files['file'].read()
+    buffer = process_image(model, input_image)
+    return send_file(buffer, mimetype='image/png'), 200
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

@@ -35,8 +35,8 @@ class Transforms():
         image = color_jitter(image)
         return image
 
-def process_image(model):
-    image = Image.open("168907806_1.jpg")
+def process_image(model, image):
+    image = Image.open(io.BytesIO(image))
     image = image.convert("L")
     transforms = Transforms()
     image = transforms.resize(image, (224, 224))
@@ -49,19 +49,9 @@ def process_image(model):
     plt.figure(figsize=(5,5))
     plt.imshow(image.numpy().squeeze(), cmap='gray')
     plt.scatter(predictions[0,:,0].detach().numpy(), predictions[0,:,1].detach().numpy(), c='r', s=5)
-    # plt.show()
 
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
 
     return buffer
-
-    # return image
-
-# model = torch.load("Models/model.pt", map_location=torch.device('cpu'))
-# print ("###### MODEL LOADED ######")
-# model.load_state_dict(torch.load("Models/model.pth", map_location=torch.device('cpu'))) # load model only once, when server is started
-# print ("###### MODEL STATE DICT LOADED ######")
-# model.eval()
-# process_image(model)

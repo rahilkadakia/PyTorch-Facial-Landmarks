@@ -1,8 +1,10 @@
 'use client';
 import React, { useState, ChangeEvent } from 'react';
+import DisplayImage from './DisplayImage';
 
 const FileUpload: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fd, setFd] = useState<FormData | null>(null); // State to manage FormData object
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -12,11 +14,9 @@ const FileUpload: React.FC = () => {
 
   const handleClick = () => {
     if (selectedFile) {
-      let fd = new FormData();
-      fd.append('file', selectedFile);
-      // Use fd for further processing like making a POST request
-      console.log(selectedFile);
-      fd.forEach((value, key) => console.log(key, value));
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      setFd(formData); // Update state with the FormData object
     } else {
       console.log('No file selected.');
     }
@@ -35,6 +35,7 @@ const FileUpload: React.FC = () => {
       <button className="btn btn-primary" onClick={handleClick}>
         Upload
       </button>
+      {fd && <DisplayImage fd={fd} />} {/* Pass fd to DisplayImage if it exists */}
     </>
   );
 };

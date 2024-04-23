@@ -1,4 +1,4 @@
-
+import matplotlib
 import matplotlib.pyplot as plt
 import io
 import torchvision.transforms.functional as TF
@@ -7,6 +7,7 @@ from PIL import Image
 import torch.nn as nn
 from torchvision import models
 
+matplotlib.use( 'Agg' )
 class Network(nn.Module):
     def __init__(self,num_classes=136):
         super().__init__()

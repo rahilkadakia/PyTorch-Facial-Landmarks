@@ -16,17 +16,12 @@ model.load_state_dict(torch.load("Models/model.pth", map_location=torch.device('
 print("###### MODEL STATE DICT LOADED ######")
 model.eval()
 
-@app.route("/process-image", methods=['POST', 'OPTIONS'])  # Allow OPTIONS method
+@app.route("/process-image", methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def POST_process_image():
-    if request.method == 'OPTIONS':  # Handle preflight requests
-        response = app.make_default_options_response()
-    else:
-        input_image = request.files['file'].read()
-        buffer = process_image(model, input_image)
-        response = send_file(buffer, mimetype='image/png')
-    
-    return response
+    input_image = request.files['file'].read()
+    buffer = process_image(model, input_image)
+    return send_file(buffer, mimetype='image/png')
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

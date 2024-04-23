@@ -1,28 +1,33 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 
 interface DisplayImageProps {
   fd: FormData;
 }
 
 const DisplayImage: React.FC<DisplayImageProps> = ({ fd }) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
   const processImage = async () => {
     try {
       const res = await fetch('http://127.0.0.1:8000/process-image', {
         method: 'POST',
         body: fd,
       });
-      const image = await res.json(); // assuming the response is JSON
-      console.log(image); // handle the response as needed
+      const blob = await res.blob(); // get the image as a blob
+      const url = URL.createObjectURL(blob); // create a URL from the blob
+      setImageUrl(url); // save the URL in the state
     } catch (error) {
       console.error('Error processing image:', error);
     }
   };
 
-  processImage(); // initiate the process when the component mounts
+  useEffect(() => {
+    processImage(); // initiate the process when the component mounts
+  }, []);
 
   return (
     <div>
-      <p>Processing image...</p>
+      {imageUrl ? <img src={imageUrl} alt="Processed" /> : <p>Processing image...</p>}
     </div>
   );
 };

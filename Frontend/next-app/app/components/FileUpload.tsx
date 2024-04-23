@@ -5,10 +5,16 @@ import DisplayImage from './DisplayImage';
 const FileUpload: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fd, setFd] = useState<FormData | null>(null); // State to manage FormData object
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // State to manage preview URL
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
+      const file = event.target.files[0];
+      setSelectedFile(file);
+
+      // Create a URL from the file to use as the src for the preview image
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
     }
   };
 
@@ -35,6 +41,7 @@ const FileUpload: React.FC = () => {
       <button className="btn btn-primary" onClick={handleClick}>
         Upload
       </button>
+      {previewUrl && <img src={previewUrl} alt="Preview" height={500} width={500} />} {/* Display the preview image if the URL exists */}
       {fd && <DisplayImage fd={fd} />} {/* Pass fd to DisplayImage if it exists */}
     </>
   );

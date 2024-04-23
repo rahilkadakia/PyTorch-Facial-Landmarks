@@ -5,8 +5,9 @@ from flask import send_file
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-CORS(app)
+cors = CORS(app, resources={r"/process-image": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
+
 ###### Load Model only once, when Server is started ######
 
 model = Network()
@@ -16,6 +17,7 @@ print("###### MODEL STATE DICT LOADED ######")
 model.eval()
 
 @app.route("/process-image", methods=['POST', 'OPTIONS'])  # Allow OPTIONS method
+@cross_origin(origin='*',headers=['Content-Type'])
 def POST_process_image():
     if request.method == 'OPTIONS':  # Handle preflight requests
         response = app.make_default_options_response()
@@ -24,9 +26,6 @@ def POST_process_image():
         buffer = process_image(model, input_image)
         response = send_file(buffer, mimetype='image/png')
     
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')  # Specify allowed methods
     return response
 
 if __name__ == '__main__':

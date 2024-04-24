@@ -9,7 +9,7 @@ const DisplayImage: React.FC<DisplayImageProps> = ({ fd }) => {
 
   const processImage = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/process-image', {
+      const res = await fetch('https://dynamic-nomad-414417.ue.r.appspot.com/process-image', {
         method: 'POST',
         body: fd,
       });

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import Image from 'next/image';
 interface DisplayImageProps {
   fd: FormData;
 }
@@ -26,9 +26,15 @@ const DisplayImage: React.FC<DisplayImageProps> = ({ fd }) => {
   }, []);
 
   return (
-    <div>
-      {imageUrl ? <img src={imageUrl} alt="Processed" /> : <p>Processing image...</p>}
-    </div>
+  <>
+      {imageUrl ? (
+        <div style={{ width: '400px', height: '400px' }}> {/* Set custom dimensions */}
+          <Image src={imageUrl} alt="Processed" layout="responsive" width={400} height={400} />
+        </div>
+      ) : (
+        <p>Processing image...</p>
+      )}
+    </>
   );
 };
 

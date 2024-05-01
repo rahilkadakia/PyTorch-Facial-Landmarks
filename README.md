@@ -10,3 +10,6 @@
    - Body: Form-Data (Image)
 
 ## Frontend URL
+1. **Homepage**
+   - Methods: GET
+   - URL: https://pytorch-facial-landmarks-pixj7cjzhq-uc.a.run.app

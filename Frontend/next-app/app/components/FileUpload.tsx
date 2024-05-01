@@ -11,7 +11,7 @@ const FileUpload: React.FC = () => {
   useEffect(() => {
     const processImage = async () => {
     try {
-      const res = await fetch('http://dynamic-nomad-414417.ue.r.appspot.com/process-image', {
+      const res = await fetch('https://main-pixj7cjzhq-uc.a.run.app/process-image', {
         method: 'POST',
         body: fd,
       });

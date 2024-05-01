@@ -6,8 +6,9 @@ from torchvision import transforms
 from PIL import Image
 import torch.nn as nn
 from torchvision import models
+from torch.utils.data import Dataset, DataLoader
 
-matplotlib.use( 'Agg' )
+matplotlib.use('Agg')
 class Network(nn.Module):
     def __init__(self,num_classes=136):
         super().__init__()
@@ -19,6 +20,21 @@ class Network(nn.Module):
     def forward(self, x):
         x=self.model(x)
         return x
+
+class SingleImageDataset(Dataset):
+    def __init__(self, img, transform=None):
+        self.img = img
+        self.transform = transform
+
+    def __len__(self):
+        return 1  # Since we have only one image
+
+    def __getitem__(self, idx):
+        if self.transform:
+            img = self.transform(self.img)
+        else:
+            img = transforms.ToTensor()(self.img)
+        return img
 
 class Transforms():
     def __init__(self):
@@ -35,24 +51,41 @@ class Transforms():
                                               hue=0.1)
         image = color_jitter(image)
         return image
+    
+    def to_tensor(self, image):
+        image = TF.to_tensor(image)
+        return image
+
+    def normalize(self, image):
+        image = TF.normalize(image, [0.5], [0.5])
+        return image
 
 def process_image(model, image):
     image = Image.open(io.BytesIO(image))
     image = image.convert("L")
-    transforms = Transforms()
-    image = transforms.resize(image, (224, 224))
-    image = transforms.color_jitter(image)
-    image = TF.to_tensor(image)
-    image = TF.normalize(image, [0.5], [0.5]).unsqueeze(0)
+    
+    custom_transforms = Transforms()
+    transform = transforms.Compose([
+        transforms.Lambda(lambda x: custom_transforms.resize(x, (224, 224))),  
+        transforms.Lambda(lambda x: custom_transforms.color_jitter(x)),
+        transforms.Lambda(lambda x: custom_transforms.to_tensor(x)),
+        transforms.Lambda(lambda x: custom_transforms.normalize(x))
+    ])
+    
+    single_image_dataset = SingleImageDataset(image, transform=transform)
+    data_loader = DataLoader(single_image_dataset, batch_size=1, shuffle=False)
 
-    predictions = (model(image).cpu() + 0.55) * 190
+    image = next(iter(data_loader))
+
+    predictions = (model(image).cpu() + 0.5) * 224
     predictions = predictions.view(-1,68,2)
     plt.figure(figsize=(5,5))
-    plt.imshow(image.numpy().squeeze(), cmap='gray')
+
+    plt.imshow(image[0].cpu().numpy().transpose(1,2,0).squeeze(), cmap='gray')
     plt.scatter(predictions[0,:,0].detach().numpy(), predictions[0,:,1].detach().numpy(), c='r', s=5)
 
     buffer = io.BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
-
+    plt.show()
     return buffer

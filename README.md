@@ -1,3 +1,12 @@
-### Backend URL
-Homepage: GET/POST | https://main-pixj7cjzhq-uc.a.run.app/
-Image Processing Page: POST | https://main-pixj7cjzhq-uc.a.run.app/process-image
+# URLs
+## Backend URLs
+1. **Homepage**
+   - Methods: GET/POST
+   - URL: https://main-pixj7cjzhq-uc.a.run.app/
+
+2. **Image Processing Page**
+   - Methods: POST
+   - URL: https://main-pixj7cjzhq-uc.a.run.app/process-image
+   - Body: Form-Data (Image)
+
+## Frontend URL
